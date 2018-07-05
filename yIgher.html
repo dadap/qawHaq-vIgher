@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8" />
+<script src="jquery-3.3.1.min.js"></script>
+<script>
+var qawHaq;
+
+function load() {
+    $.getJSON("qawHaq.json", function(data) {
+        // Full word database
+        qawHaq = data.qawHaq
+
+        // Add menu entries for each locale
+        Object.keys(data.locales).forEach(function(locale){
+            $("#Hol").append(
+                `<option value="${locale}">${data.locales[locale]}</option>`
+            );
+        });
+    })
+}
+
+function list(lang) {
+    // Clear results list
+    $("#tetlh").text("")
+
+    if (lang != '') {
+        // Filter all entries which have a definition in the selected locale
+        var results = Object.keys(qawHaq).filter(function(key) {
+            return qawHaq[key].definition[lang] != null;
+        });
+
+        // Add list item for each result
+        results.forEach(function(result){
+            $("#tetlh").append(
+                `<li class="result">
+                     <span class="entry_name">
+                         ${qawHaq[result].entry_name}
+                     </span>
+                     <span class="definition">
+                         ${qawHaq[result].definition[lang]}
+                     </span>
+                     <span class="definition">
+                         ${qawHaq[result].definition['en']}
+                     </span>
+                 </li>`
+            );
+        });
+    }
+}
+</script>
+<body onload="load()">
+<select id="Hol" onChange="list(this.value);">
+    <option value="">Hol yIwIv!</option>
+</select>
+<ul id='tetlh'>
+</ul>
+</body>
+</html>
